@@ -6,13 +6,22 @@
 #include <QMouseEvent>
 #include <vector>
 
-#define MAX_LINES 100
+#define MAX_LINES 1000
+
+struct Point {
+    int x;
+    int y;
+};
 
 struct Line {
-    int startX;
-    int startY;
-    int endX;
-    int endY;
+    Point start;
+    Point end;
+};
+
+struct Stroke {
+    std::vector<Point> points;
+    QColor color;
+    int size;
 };
 
 class DrawingArea : public QWidget {
@@ -27,11 +36,20 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent*);
     virtual void mouseMoveEvent(QMouseEvent*);
 
+    void drawStroke(QPainter &painter, Stroke &stroke);
+
 private:
-    Line currentLine {};
+    Stroke currentStroke {};
+    std::vector<Stroke> strokes {};
     bool mouseDown {};
-    Line lines[MAX_LINES] {};
     int index = 0;
+
+    QColor currentColor;
+    int currentSize = 1;
+
+public:
+    void setColor(QColor color) {currentColor = color;}
+    void setSize(int size) {currentSize = size;}
 };
 
 #endif // DRAWINGAREA_H

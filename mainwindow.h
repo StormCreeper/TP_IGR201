@@ -18,5 +18,13 @@ public:
 private:
     Ui::MainWindow *ui;
     DrawingArea *area;
+
+    QAction *actionSizeSmall {};
+    QAction *actionSizeMedium {};
+    QAction *actionSizeBig {};
+
+public slots:
+    void chooseColor();
+    void chooseSize(QAction *action);
 };
 #endif // MAINWINDOW_H

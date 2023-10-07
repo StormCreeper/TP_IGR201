@@ -25,6 +25,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         drawingarea.h drawingarea.cpp
         drawingshape.h drawingshape.cpp
+        images.qrc
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET TP_2 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

@@ -8,52 +8,70 @@ DrawingArea::DrawingArea(QWidget *parent) : QWidget{parent} {
 void DrawingArea::paintEvent(QPaintEvent *e) {
     QWidget::paintEvent(e);
     QPainter painter(this);
-    /*painter.drawLine(currentLine.start.x, currentLine.start.y, currentLine.end.x, currentLine.end.y);
-    for(int i=0; i<index; i++) {
-        painter.drawLine(lines[i].start.x, lines[i].start.y, lines[i].end.x, lines[i].end.y);
-    }*/
 
-    for(Stroke &s : strokes) {
-        drawStroke(painter, s);
+    QPalette pal {};
+    pal.setColor(QPalette::Window, Qt::white);
+
+    setAutoFillBackground(true);
+    setPalette(pal);
+
+    for(DrawingShape *ds : shapes) {
+        if(ds)
+            ds->paint(painter);
     }
-    drawStroke(painter, currentStroke);
-}
-
-void DrawingArea::drawStroke(QPainter &painter, Stroke &stroke) {
-    QPen pen {};
-    pen.setColor(stroke.color);
-    pen.setWidth(stroke.size);
-    painter.setPen(pen);
-
-    if(stroke.points.size() <= 1) return;
-    for(int i=0; i<stroke.points.size()-1; i++) {
-        Point &p1 = stroke.points[i];
-        Point &p2 = stroke.points[i+1];
-
-        painter.drawLine(p1.x, p1.y, p2.x, p2.y);
-    }
+    if(currentShape) currentShape->paint(painter);
 }
 
 void DrawingArea::mousePressEvent(QMouseEvent *e) {
-    currentStroke = Stroke { };
-    currentStroke.points.push_back({e->pos().x(), e->pos().y()});
-    currentStroke.color = currentColor;
-    currentStroke.size = currentSize;
+    switch(currentTool) {
+    case ShapeType::Brush:
+        currentShape = new Stroke {currentColor, currentSize};
+        break;
+    case ShapeType::Line:
+        currentShape = new Line {currentColor, currentSize};
+        break;
+    case ShapeType::Rect:
+        currentShape = new Rectangle {currentColor, currentSize};
+        break;
+    case ShapeType::Ellipse:
+        currentShape = new Ellipse {currentColor, currentSize};
+        break;
+    }
+
+    currentShape->onMouseDown(e->pos());
+
     mouseDown = true;
-}
-
-void DrawingArea::mouseReleaseEvent(QMouseEvent *e) {
-    mouseDown = false;
-    currentStroke.points.push_back({e->pos().x(), e->pos().y()});
-    strokes.push_back(currentStroke);
-
-    currentStroke = {};
 }
 
 void DrawingArea::mouseMoveEvent(QMouseEvent *e) {
     if (mouseDown) {
-        currentStroke.points.push_back({e->pos().x(), e->pos().y()});
+        currentShape->onMouseMove(e->pos());
 
         this->update();
     }
 }
+
+void DrawingArea::setCurrentTool(ShapeType newCurrentTool) {
+    currentTool = newCurrentTool;
+}
+
+void DrawingArea::clearAll() {
+    for(DrawingShape *shape : shapes) {
+        delete shape;
+    }
+    shapes.clear();
+
+    this->update();
+}
+
+void DrawingArea::mouseReleaseEvent(QMouseEvent *e) {
+    mouseDown = false;
+
+    currentShape->onMouseUp(e->pos());
+
+    shapes.push_back(currentShape);
+
+    currentShape = nullptr;
+}
+
+

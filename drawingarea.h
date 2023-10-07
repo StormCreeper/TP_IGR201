@@ -1,30 +1,13 @@
 #ifndef DRAWINGAREA_H
 #define DRAWINGAREA_H
 
+#include "drawingshape.h"
+
 #include <QWidget>
 #include <QPaintEvent>
 #include <QMouseEvent>
 #include <vector>
 
-#define MAX_LINES 1000
-
-struct Point {
-    int x;
-    int y;
-};
-
-struct Line {
-    Point start;
-    Point end;
-};
-
-struct Stroke {
-    std::vector<Point> points;
-    QColor color;
-    int size;
-};
-
-enum class Tool { Brush, Rect, Ellipse };
 
 class DrawingArea : public QWidget {
     Q_OBJECT
@@ -38,22 +21,30 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent*);
     virtual void mouseMoveEvent(QMouseEvent*);
 
-    void drawStroke(QPainter &painter, Stroke &stroke);
-
 private:
-    Stroke currentStroke {};
-    std::vector<Stroke> strokes {};
+    DrawingShape *currentShape {};
+    std::vector<DrawingShape*> shapes {};
     bool mouseDown {};
     int index = 0;
 
     QColor currentColor;
     int currentSize = 1;
 
-    Tool tool;
+    ShapeType currentTool = ShapeType::Brush;
 
 public:
-    void setColor(QColor color) {currentColor = color;}
-    void setSize(int size) {currentSize = size;}
+    ~DrawingArea() {
+        for(DrawingShape *shape : shapes) {
+            delete shape;
+        }
+    }
+
+public:
+    void setColor(QColor color) { currentColor = color; }
+    void setSize(int size) { currentSize = size; }
+    void setTool(ShapeType tool) { currentTool = tool; }
+    void setCurrentTool(ShapeType newCurrentTool);
+    void clearAll();
 };
 
 #endif // DRAWINGAREA_H

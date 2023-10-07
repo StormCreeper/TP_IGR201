@@ -23,8 +23,18 @@ private:
     QAction *actionSizeMedium {};
     QAction *actionSizeBig {};
 
+    QAction *actionToolBrush {};
+    QAction *actionToolLine {};
+    QAction *actionToolRect {};
+    QAction *actionToolEllipse {};
+
 public slots:
     void chooseColor();
+    void clearAll();
+    void save();
+    void load();
+
     void chooseSize(QAction *action);
+    void chooseTool(QAction *action);
 };
 #endif // MAINWINDOW_H

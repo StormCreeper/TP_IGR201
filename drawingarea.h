@@ -24,6 +24,8 @@ struct Stroke {
     int size;
 };
 
+enum class Tool { Brush, Rect, Ellipse };
+
 class DrawingArea : public QWidget {
     Q_OBJECT
 public:
@@ -46,6 +48,8 @@ private:
 
     QColor currentColor;
     int currentSize = 1;
+
+    Tool tool;
 
 public:
     void setColor(QColor color) {currentColor = color;}

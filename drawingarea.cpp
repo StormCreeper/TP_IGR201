@@ -13,10 +13,10 @@ void DrawingArea::paintEvent(QPaintEvent *e) {
         painter.drawLine(lines[i].start.x, lines[i].start.y, lines[i].end.x, lines[i].end.y);
     }*/
 
-    drawStroke(painter, currentStroke);
     for(Stroke &s : strokes) {
         drawStroke(painter, s);
     }
+    drawStroke(painter, currentStroke);
 }
 
 void DrawingArea::drawStroke(QPainter &painter, Stroke &stroke) {

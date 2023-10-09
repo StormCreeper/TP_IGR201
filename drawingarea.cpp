@@ -16,8 +16,9 @@ void DrawingArea::paintEvent(QPaintEvent *e) {
     setPalette(pal);
 
     for(DrawingShape *ds : shapes) {
-        if(ds)
+        if(ds) {
             ds->paint(painter);
+        }
     }
     if(currentShape) currentShape->paint(painter);
 }

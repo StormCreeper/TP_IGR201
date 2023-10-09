@@ -24,6 +24,8 @@ public:
     virtual void onMouseMove(QPoint) = 0;
     virtual void onMouseUp(QPoint) = 0;
 
+    virtual bool contains(QPoint) = 0;
+
     virtual ~DrawingShape() {};
 
     QColor getColor() { return color; }
@@ -43,6 +45,8 @@ public:
     virtual void onMouseDown(QPoint point) { points.push_back(point); }
     virtual void onMouseMove(QPoint point) { points.push_back(point); };
     virtual void onMouseUp(QPoint point) { points.push_back(point); };
+
+    virtual bool contains(QPoint p) { return 0; }
 };
 
 class Rectangle : public DrawingShape {
@@ -59,6 +63,8 @@ public:
     void onMouseDown(QPoint point) { startPoint = point; endPoint = point; }
     void onMouseMove(QPoint point) { endPoint = point; }
     void onMouseUp(QPoint point) { endPoint = point; }
+
+    virtual bool contains(QPoint p) { return 0; }
 };
 
 class Ellipse : public Rectangle {
@@ -67,6 +73,8 @@ public:
 
 public:
     void paint(QPainter &);
+
+    virtual bool contains(QPoint p) { return 0; }
 };
 
 class Line : public DrawingShape {
@@ -83,6 +91,8 @@ public:
     void onMouseDown(QPoint point) { startPoint = point; endPoint = point; }
     void onMouseMove(QPoint point) { endPoint = point; }
     void onMouseUp(QPoint point) { endPoint = point; }
+
+    virtual bool contains(QPoint p) { return 0; }
 };
 
 #endif // DRAWINGSHAPE_H

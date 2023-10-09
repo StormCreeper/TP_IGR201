@@ -1,6 +1,7 @@
 #include "drawingshape.h"
 
 void Stroke::paint(QPainter &painter) {
+
     QPen pen {};
     pen.setColor(getColor());
     pen.setWidth(getSize());

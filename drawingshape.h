@@ -27,6 +27,8 @@ public:
     virtual bool contains(QPoint p) { return getBoundingBox().contains(p); }
     virtual QRect getBoundingBox() = 0;
 
+    virtual void moveBy(int dx, int dy) = 0;
+
     virtual ~DrawingShape() {};
 
     QColor getColor() { return color; }
@@ -50,6 +52,7 @@ public:
     virtual void onMouseUp(QPoint point) { points.push_back(point); };
 
     virtual QRect getBoundingBox() { return {}; }
+    virtual void moveBy(int dx, int dy) {}
 };
 
 class Rectangle : public DrawingShape {
@@ -75,6 +78,14 @@ public:
         int h = std::abs(startPoint.y() - endPoint.y());
 
         return QRect {x, y, w, h};
+    }
+
+    virtual void moveBy(int dx, int dy) {
+        startPoint.setX(startPoint.x() + dx);
+        startPoint.setY(startPoint.y() + dy);
+
+        endPoint.setX(endPoint.x() + dx);
+        endPoint.setY(endPoint.y() + dy);
     }
 };
 

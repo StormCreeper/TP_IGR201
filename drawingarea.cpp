@@ -44,6 +44,8 @@ void DrawingArea::mousePressEvent(QMouseEvent *e) {
                 selected = shape;
             }
         }
+        selectLastPosX = e->pos().x();
+        selectLastPosY = e->pos().y();
         this->update();
     } else {
 
@@ -70,25 +72,39 @@ void DrawingArea::mousePressEvent(QMouseEvent *e) {
 
 void DrawingArea::mouseMoveEvent(QMouseEvent *e) {
 
-    if(selecting) return;
+    if(selecting) {
+        int currentX = e->pos().x();
+        int currentY = e->pos().y();
 
-    if (mouseDown && currentShape) {
-        currentShape->onMouseMove(e->pos());
-        this->update();
+        if(mouseDown && selected) {
+            selected->moveBy(currentX - selectLastPosX, currentY - selectLastPosY);
+            selectLastPosX = currentX;
+            selectLastPosY = currentY;
+            this->update();
+        }
+    } else {
+
+        if (mouseDown && currentShape) {
+            currentShape->onMouseMove(e->pos());
+            this->update();
+        }
     }
 }
 
 void DrawingArea::mouseReleaseEvent(QMouseEvent *e) {
 
-    if(selecting && !currentShape) return;
+    if(selecting) {
+        selected = nullptr;
+    } else {
 
-    mouseDown = false;
+        mouseDown = false;
 
-    currentShape->onMouseUp(e->pos());
+        currentShape->onMouseUp(e->pos());
 
-    shapes.push_back(currentShape);
+        shapes.push_back(currentShape);
 
-    currentShape = nullptr;
+        currentShape = nullptr;
+    }
 }
 
 void DrawingArea::setCurrentTool(ShapeType newCurrentTool) {

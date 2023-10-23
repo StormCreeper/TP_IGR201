@@ -35,6 +35,8 @@ private:
     DrawingShape *selected {};
 
     bool selecting {};
+    int selectLastPosX {};
+    int selectLastPosY {};
 
 public:
     ~DrawingArea() {
@@ -58,6 +60,7 @@ public:
         }
         else currentSize = size;
     }
+
     void setTool(ShapeType tool) { currentTool = tool; }
     void setCurrentTool(ShapeType newCurrentTool);
     void clearAll();

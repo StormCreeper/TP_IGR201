@@ -33,6 +33,7 @@ public slots:
     void clearAll();
     void save();
     void load();
+    void select();
 
     void chooseSize(QAction *action);
     void chooseTool(QAction *action);

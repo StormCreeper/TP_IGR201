@@ -32,6 +32,10 @@ private:
 
     ShapeType currentTool = ShapeType::Brush;
 
+    DrawingShape *selected {};
+
+    bool selecting {};
+
 public:
     ~DrawingArea() {
         for(DrawingShape *shape : shapes) {
@@ -40,11 +44,24 @@ public:
     }
 
 public:
-    void setColor(QColor color) { currentColor = color; }
-    void setSize(int size) { currentSize = size; }
+    void setColor(QColor color) {
+        if(selecting && selected) {
+            selected->setColor(color);
+            this->update();
+        }
+        else currentColor = color;
+    }
+    void setSize(int size) {
+        if(selected && selected) {
+            selected->setSize(size);
+            this->update();
+        }
+        else currentSize = size;
+    }
     void setTool(ShapeType tool) { currentTool = tool; }
     void setCurrentTool(ShapeType newCurrentTool);
     void clearAll();
+    void toogleSelect();
 };
 
 #endif // DRAWINGAREA_H

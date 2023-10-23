@@ -10,5 +10,6 @@
         <file>images/rectangle.png</file>
         <file>images/save.png</file>
         <file>images/small.png</file>
+        <file>images/select.png</file>
     </qresource>
 </RCC>

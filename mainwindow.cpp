@@ -3,6 +3,7 @@
 
 #include <QColorDialog>
 #include <QActionGroup>
+#include <QToolBar>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) , ui(new Ui::MainWindow) {
 
@@ -17,8 +18,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) , ui(new Ui::MainW
 
     QMenu *menuChooseSize = menuDraw->addMenu(tr("&Size"));
     QMenu *menuChooseTool = menuDraw->addMenu(tr("&Tool"));
-
-
 
     QActionGroup *sizeGroup = new QActionGroup(this);
     connect(sizeGroup, SIGNAL(triggered(QAction*)), this, SLOT(chooseSize(QAction*)));
@@ -51,12 +50,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) , ui(new Ui::MainW
 
     QAction *actionSave = new QAction(QIcon(":/images/save.png"), tr("&Save"));
     QAction *actionOpen = new QAction(QIcon(":/images/open.png"), tr("&Open"));
+    QAction *actionSelect = new QAction(QIcon(":/images/select.png"), tr("&Select"));
+
+    actionSelect->setCheckable(true);
 
     menuFile->addAction(actionSave);
     menuFile->addAction(actionOpen);
 
     connect(actionSave, SIGNAL(triggered()), this, SLOT(save()));
     connect(actionOpen, SIGNAL(triggered()), this, SLOT(load()));
+    connect(actionSelect, SIGNAL(triggered()), this, SLOT(select()));
+
+    QToolBar *toolbar = this->addToolBar(tr("File"));
+    toolbar->addAction(actionOpen);
+    toolbar->addAction(actionSave);
+    toolbar->addAction(actionSelect);
 
     area = new DrawingArea();
     setCentralWidget(area);
@@ -75,7 +83,10 @@ void MainWindow::save() {
 
 void MainWindow::load() {
     qDebug() << "Loading file (not implemented)";
+}
 
+void MainWindow::select() {
+    area->toogleSelect();
 }
 
 void MainWindow::chooseSize(QAction *action) {

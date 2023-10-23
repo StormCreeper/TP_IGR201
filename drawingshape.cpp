@@ -22,13 +22,7 @@ void Rectangle::paint(QPainter &painter) {
     pen.setWidth(getSize());
     painter.setPen(pen);
 
-    int x = std::min(startPoint.x(), endPoint.x());
-    int y = std::min(startPoint.y(), endPoint.y());
-
-    int w = std::abs(startPoint.x() - endPoint.x());
-    int h = std::abs(startPoint.y() - endPoint.y());
-
-    painter.drawRect(x, y, w, h);
+    painter.drawRect(getBoundingBox());
 }
 
 void Ellipse::paint(QPainter &painter) {

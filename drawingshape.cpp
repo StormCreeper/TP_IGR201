@@ -26,12 +26,6 @@ bool pointOnLine(QPoint p, QPoint p1, QPoint p2, float tolerance) {
 }
 
 void Stroke::paint(QPainter &painter) {
-
-    QPen pen {};
-    pen.setColor(getColor());
-    pen.setWidth(getSize());
-    painter.setPen(pen);
-
     if(points.size() <= 1) return;
     for(int i=0; i<points.size()-1; i++) {
         QPoint &p1 = points[i];
@@ -42,20 +36,10 @@ void Stroke::paint(QPainter &painter) {
 }
 
 void Rectangle::paint(QPainter &painter) {
-    QPen pen {};
-    pen.setColor(getColor());
-    pen.setWidth(getSize());
-    painter.setPen(pen);
-
     painter.drawRect(getBoundingBox());
 }
 
 void Ellipse::paint(QPainter &painter) {
-    QPen pen {};
-    pen.setColor(getColor());
-    pen.setWidth(getSize());
-    painter.setPen(pen);
-
     int x = std::min(startPoint.x(), endPoint.x());
     int y = std::min(startPoint.y(), endPoint.y());
 
@@ -66,10 +50,5 @@ void Ellipse::paint(QPainter &painter) {
 }
 
 void Line::paint(QPainter &painter) {
-    QPen pen {};
-    pen.setColor(getColor());
-    pen.setWidth(getSize());
-    painter.setPen(pen);
-
     painter.drawLine(startPoint, endPoint);
 }

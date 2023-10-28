@@ -25,10 +25,22 @@ void DrawingArea::paintEvent(QPaintEvent *e) {
 
     for(auto ds : shapes) {
         if(ds) {
+            QPen pen {};
+            pen.setColor(ds->getColor());
+            pen.setWidth(ds->getSize());
+            painter.setPen(pen);
+
             ds->paint(painter);
         }
     }
-    if(currentShape) currentShape->paint(painter);
+    if(currentShape) {
+        QPen pen {};
+        pen.setColor(currentShape->getColor());
+        pen.setWidth(currentShape->getSize());
+        painter.setPen(pen);
+
+        currentShape->paint(painter);
+    }
 
     if(selected) {
         QPen pen {};
@@ -36,7 +48,7 @@ void DrawingArea::paintEvent(QPaintEvent *e) {
         pen.setWidth(4);
         painter.setPen(pen);
 
-        painter.drawRect(selected->getBoundingBox());
+        selected->paint(painter);
     }
 }
 

@@ -24,7 +24,6 @@ void DrawingArea::paintEvent(QPaintEvent *e) {
     }
     if(currentShape) currentShape->paint(painter);
 
-    qDebug() << selected;
     if(selected) {
         QPen pen {};
         pen.setColor(Qt::blue);
@@ -82,6 +81,18 @@ void DrawingArea::mouseMoveEvent(QMouseEvent *e) {
             selectLastPosY = currentY;
             this->update();
         }
+
+        if(!mouseDown) {
+            selected = nullptr;
+            for (DrawingShape *shape : shapes) {
+                if(shape->contains(e->pos())) {
+                    selected = shape;
+                }
+            }
+            selectLastPosX = e->pos().x();
+            selectLastPosY = e->pos().y();
+            this->update();
+        }
     } else {
 
         if (mouseDown && currentShape) {
@@ -89,6 +100,7 @@ void DrawingArea::mouseMoveEvent(QMouseEvent *e) {
             this->update();
         }
     }
+    this->update();
 }
 
 void DrawingArea::mouseReleaseEvent(QMouseEvent *e) {
@@ -96,7 +108,6 @@ void DrawingArea::mouseReleaseEvent(QMouseEvent *e) {
     if(selecting) {
         selected = nullptr;
     } else {
-
         mouseDown = false;
 
         currentShape->onMouseUp(e->pos());

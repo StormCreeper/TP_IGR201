@@ -49,12 +49,34 @@ void DrawingArea::paintEvent(QPaintEvent *e) {
         painter.setPen(pen);
 
         selected->paint(painter);
+
+        pen.setColor(Qt::black);
+        pen.setWidth(1);
+        painter.setPen(pen);
+
+        auto handles = selected->getHandles();
+        for(auto handle : handles) {
+            painter.fillRect(handle->x()-4, handle->y()-4, 8, 8, Qt::white);
+            painter.drawRect(handle->x()-4, handle->y()-4, 8, 8);
+        }
     }
 }
 
 void DrawingArea::mousePressEvent(QMouseEvent *e) {
+    mouseDown = true;
 
     if(selecting) {
+        if(selected) {
+            auto handles = selected->getHandles();
+            for(auto handle : handles) {
+                if(QRect(handle->x()-4, handle->y()-4, 8, 8).contains(e->pos())) {
+                    selectedHandle = handle;
+                    selectLastPosX = e->pos().x();
+                    selectLastPosY = e->pos().y();
+                    return;
+                }
+            }
+        }
         selected = nullptr;
         for (auto shape : shapes) {
             if(shape->contains(e->pos())) {
@@ -82,9 +104,7 @@ void DrawingArea::mousePressEvent(QMouseEvent *e) {
         }
 
         currentShape->onMouseDown(e->pos());
-
     }
-    mouseDown = true;
 }
 
 void DrawingArea::mouseMoveEvent(QMouseEvent *e) {
@@ -93,11 +113,17 @@ void DrawingArea::mouseMoveEvent(QMouseEvent *e) {
         int currentX = e->pos().x();
         int currentY = e->pos().y();
 
-        if(mouseDown && selected) {
-            selected->moveBy(currentX - selectLastPosX, currentY - selectLastPosY);
-            selectLastPosX = currentX;
-            selectLastPosY = currentY;
-            this->update();
+        if(mouseDown) {
+            if(selectedHandle) {
+                selectedHandle->setX(currentX);
+                selectedHandle->setY(currentY);
+                this->update();
+            } else if(selected) {
+                selected->moveBy(currentX - selectLastPosX, currentY - selectLastPosY);
+                selectLastPosX = currentX;
+                selectLastPosY = currentY;
+                this->update();
+            }
         }
 
     } else {
@@ -114,7 +140,7 @@ void DrawingArea::mouseReleaseEvent(QMouseEvent *e) {
     mouseDown = false;
 
     if(selecting) {
-
+        selectedHandle = nullptr;
     } else {
         currentShape->onMouseUp(e->pos());
 

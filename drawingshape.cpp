@@ -35,6 +35,31 @@ void Stroke::paint(QPainter &painter) {
     }
 }
 
+std::string Stroke::toString()  {
+    std::string result = "";
+    result += "S ";
+    result += std::to_string(getColor().red()) + " ";
+    result += std::to_string(getColor().green()) + " ";
+    result += std::to_string(getColor().blue()) + " ";
+    result += std::to_string(getSize()) + " ";
+    for(QPoint p : points) {
+        result += std::to_string(p.x()) + " ";
+        result += std::to_string(p.y()) + " ";
+    }
+    return result;
+}
+
+void Stroke::fromString(std::string line)  {
+    std::istringstream iss(line);
+    std::vector<std::string> tokens{std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{}};
+
+    for(int i = 5; i < tokens.size(); i+=2) {
+        int x = std::stoi(tokens[i]);
+        int y = std::stoi(tokens[i+1]);
+        points.push_back(QPoint(x, y));
+    }
+}
+
 void Rectangle::paint(QPainter &painter) {
     painter.drawRect(getBoundingBox());
 }

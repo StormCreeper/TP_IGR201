@@ -35,6 +35,8 @@ private:
 
     std::shared_ptr<DrawingShape> selected {};
 
+    QPoint *selectedHandle {};
+
     bool selecting {};
     int selectLastPosX {};
     int selectLastPosY {};

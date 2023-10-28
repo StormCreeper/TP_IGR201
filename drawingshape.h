@@ -36,6 +36,8 @@ public:
     virtual std::string toString() = 0;
     virtual void fromString(std::string ) = 0;
 
+    virtual std::vector<QPoint *> getHandles() = 0;
+
     virtual ~DrawingShape() {};
 
     QColor getColor() { return color; }
@@ -61,30 +63,11 @@ public:
     virtual QRect getBoundingBox() { return {}; }
     virtual void moveBy(int dx, int dy) {}
 
-    virtual std::string toString() {
-        std::string result = "";
-        result += "S ";
-        result += std::to_string(getColor().red()) + " ";
-        result += std::to_string(getColor().green()) + " ";
-        result += std::to_string(getColor().blue()) + " ";
-        result += std::to_string(getSize()) + " ";
-        for(QPoint p : points) {
-            result += std::to_string(p.x()) + " ";
-            result += std::to_string(p.y()) + " ";
-        }
-        return result;
-    }
+    virtual std::string toString();
 
-    virtual void fromString(std::string line) {
-        std::istringstream iss(line);
-        std::vector<std::string> tokens{std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{}};
+    virtual void fromString(std::string line);
 
-        for(int i = 5; i < tokens.size(); i+=2) {
-            int x = std::stoi(tokens[i]);
-            int y = std::stoi(tokens[i+1]);
-            points.push_back(QPoint(x, y));
-        }
-    }
+    virtual std::vector<QPoint *> getHandles() { return {}; }
 
 };
 
@@ -156,6 +139,13 @@ public:
         startPoint.setY(std::stoi(tokens[6]));
         endPoint.setX(std::stoi(tokens[7]));
         endPoint.setY(std::stoi(tokens[8]));
+    }
+
+    virtual std::vector<QPoint *> getHandles() {
+        std::vector<QPoint *> handles;
+        handles.push_back(&startPoint);
+        handles.push_back(&endPoint);
+        return handles;
     }
 };
 

@@ -22,7 +22,7 @@ void DrawingArea::paintEvent(QPaintEvent *e) {
     setAutoFillBackground(true);
     setPalette(pal);
 
-    for(DrawingShape *ds : shapes) {
+    for(auto ds : shapes) {
         if(ds) {
             ds->paint(painter);
         }
@@ -43,7 +43,7 @@ void DrawingArea::mousePressEvent(QMouseEvent *e) {
 
     if(selecting) {
         selected = nullptr;
-        for (DrawingShape *shape : shapes) {
+        for (auto shape : shapes) {
             if(shape->contains(e->pos())) {
                 selected = shape;
             }
@@ -55,16 +55,16 @@ void DrawingArea::mousePressEvent(QMouseEvent *e) {
 
         switch(currentTool) {
         case ShapeType::Brush:
-            currentShape = new Stroke {currentColor, currentSize};
+            currentShape = std::make_shared<Stroke>(currentColor, currentSize);
             break;
         case ShapeType::Line:
-            currentShape = new Line {currentColor, currentSize};
+            currentShape = std::make_shared<Line>(currentColor, currentSize);
             break;
         case ShapeType::Rect:
-            currentShape = new Rectangle {currentColor, currentSize};
+            currentShape = std::make_shared<Rectangle>(currentColor, currentSize);
             break;
         case ShapeType::Ellipse:
-            currentShape = new Ellipse {currentColor, currentSize};
+            currentShape = std::make_shared<Ellipse>(currentColor, currentSize);
             break;
         }
 
@@ -116,16 +116,13 @@ void DrawingArea::setCurrentTool(ShapeType newCurrentTool) {
 }
 
 void DrawingArea::clearAll() {
-    for(DrawingShape *shape : shapes) {
-        delete shape;
-    }
     shapes.clear();
 
     this->update();
 }
 
 void DrawingArea::toogleSelect() {
-    if(currentShape) delete currentShape;
+    if(currentShape) currentShape = nullptr;
     selecting = !selecting;
 }
 
@@ -142,8 +139,6 @@ void DrawingArea::toogleSelect() {
 //       ii. Rectangle: x, y, width, height
 //       iii. Ellipse: x, y, width, height
 //       iv. Stroke: x1, y1, x2, y2, ..., xn, yn
-// 4. The shapes are in the order they were drawn
-// 5. The file should be saved in the same directory as the executable
 void DrawingArea::save(QString filename) {
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly)) {
@@ -155,7 +150,7 @@ void DrawingArea::save(QString filename) {
 
     out << shapes.size() << "\n";
 
-    for(DrawingShape *shape : shapes) {
+    for(auto shape : shapes) {
         out << shape->toString().c_str() << "\n";
     }
 

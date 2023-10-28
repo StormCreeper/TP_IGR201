@@ -7,6 +7,7 @@
 #include <QPaintEvent>
 #include <QMouseEvent>
 #include <vector>
+#include <memory>
 
 
 class DrawingArea : public QWidget {
@@ -22,8 +23,8 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent*);
 
 private:
-    DrawingShape *currentShape {};
-    std::vector<DrawingShape*> shapes {};
+    std::shared_ptr<DrawingShape> currentShape {};
+    std::vector<std::shared_ptr<DrawingShape>> shapes {};
     bool mouseDown {};
     int index = 0;
 
@@ -32,7 +33,7 @@ private:
 
     ShapeType currentTool = ShapeType::Brush;
 
-    DrawingShape *selected {};
+    std::shared_ptr<DrawingShape> selected {};
 
     bool selecting {};
     int selectLastPosX {};
@@ -40,9 +41,6 @@ private:
 
 public:
     ~DrawingArea() {
-        for(DrawingShape *shape : shapes) {
-            delete shape;
-        }
     }
 
 public:

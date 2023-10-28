@@ -7,8 +7,10 @@ with different tools and a simple GUI in QT and C++.
 - Can choose color
 - Can choose pen size
 - Icons for tools
-## Todo
 - Save / Load image file
+- Resize using handles
+## Todo
 - Add style selection (dotted etc)
-- Ability to resize
+- Immplement a proper Handle class, to support custom actions (brush tool for example)
 - Ability to delete a shape
+- Implement a proper tool bar (menus are slow to use)

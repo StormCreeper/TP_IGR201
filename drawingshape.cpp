@@ -1,5 +1,8 @@
 #include "drawingshape.h"
 
+
+// General functions
+
 bool pointInEllipse(QPoint p, QPoint center, int rx, int ry) {
     float dx = p.x() - center.x();
     float dy = p.y() - center.y();
@@ -24,6 +27,8 @@ bool pointOnLine(QPoint p, QPoint p1, QPoint p2, float tolerance) {
 
     return dist <= tolerance;
 }
+
+// --------- Stroke class -------------
 
 void Stroke::paint(QPainter &painter) {
     if(points.size() <= 1) return;
@@ -60,9 +65,64 @@ void Stroke::fromString(std::string line)  {
     }
 }
 
+// --------------- Rectangle class -----------------
+
 void Rectangle::paint(QPainter &painter) {
     painter.drawRect(getBoundingBox());
 }
+
+QRect Rectangle::getBoundingBox() {
+    int x = std::min(startPoint.x(), endPoint.x());
+    int y = std::min(startPoint.y(), endPoint.y());
+
+    int w = std::abs(startPoint.x() - endPoint.x());
+    int h = std::abs(startPoint.y() - endPoint.y());
+
+    return QRect {x, y, w, h};
+}
+
+bool Rectangle::contains(QPoint p) {
+    QRect bb = getBoundingBox();
+    QRect rect1 = bb.adjusted(-5, -5, 5, 5);
+    QRect rect2 = bb.adjusted(5, 5, -5, -5);
+
+    return rect1.contains(p) && !rect2.contains(p);
+}
+
+void Rectangle::moveBy(int dx, int dy) {
+    startPoint.setX(startPoint.x() + dx);
+    startPoint.setY(startPoint.y() + dy);
+
+    endPoint.setX(endPoint.x() + dx);
+    endPoint.setY(endPoint.y() + dy);
+}
+
+std::string Rectangle::toString(std::string prefix) {
+    std::string result = "";
+    result += prefix + " ";
+    result += std::to_string(getColor().red()) + " ";
+    result += std::to_string(getColor().green()) + " ";
+    result += std::to_string(getColor().blue()) + " ";
+    result += std::to_string(getSize()) + " ";
+    result += std::to_string(startPoint.x()) + " ";
+    result += std::to_string(startPoint.y()) + " ";
+    result += std::to_string(endPoint.x()) + " ";
+    result += std::to_string(endPoint.y()) + " ";
+    return result;
+}
+
+void Rectangle::fromString(std::string line) {
+    std::istringstream iss(line);
+    std::vector<std::string> tokens{std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{}};
+
+    startPoint.setX(std::stoi(tokens[5]));
+    startPoint.setY(std::stoi(tokens[6]));
+    endPoint.setX(std::stoi(tokens[7]));
+    endPoint.setY(std::stoi(tokens[8]));
+}
+
+// ---------------------- Ellipse classe ----------------------
+
 
 void Ellipse::paint(QPainter &painter) {
     int x = std::min(startPoint.x(), endPoint.x());
@@ -74,6 +134,26 @@ void Ellipse::paint(QPainter &painter) {
     painter.drawEllipse(x, y, w, h);
 }
 
+bool Ellipse::contains(QPoint p) {
+    QRect bb = getBoundingBox();
+    QPoint center = bb.center();
+    int rx = bb.width()/2;
+    int ry = bb.height()/2;
+
+    return pointInEllipse(p, center, rx + 5, ry + 5) && !pointInEllipse(p, center, rx - 5, ry - 5);
+}
+
+
+// ----------------------- Line class ---------------------------
+
 void Line::paint(QPainter &painter) {
     painter.drawLine(startPoint, endPoint);
+}
+
+bool Line::contains(QPoint p) {
+    QRect bb = getBoundingBox();
+    QPoint p1 = bb.topLeft();
+    QPoint p2 = bb.bottomRight();
+
+    return pointOnLine(p, p1, p2, 5);
 }

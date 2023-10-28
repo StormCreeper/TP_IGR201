@@ -25,21 +25,27 @@ public:
 
     virtual void paint(QPainter &) = 0;
 
+    // Callback functions used for the drawing
     virtual void onMouseDown(QPoint) = 0;
     virtual void onMouseMove(QPoint) = 0;
     virtual void onMouseUp(QPoint) = 0;
 
+    // Functions for the shape selection
     virtual bool contains(QPoint p) { return getBoundingBox().contains(p); }
     virtual QRect getBoundingBox() = 0;
+    // Handles are key points in a shape, that will be visible when selecting
+    //  Moving them will help redefine the shape in a simple way
+    virtual std::vector<QPoint *> getHandles() = 0;
 
+    // Translates the entire shape
     virtual void moveBy(int dx, int dy) = 0;
+
+
+    // Used for saving / loading the image file in our custom format
     virtual std::string toString() = 0;
     virtual void fromString(std::string ) = 0;
 
-    virtual std::vector<QPoint *> getHandles() = 0;
-
-    virtual ~DrawingShape() {};
-
+public: // getters and setters
     QColor getColor() { return color; }
     void setColor(QColor color) { this->color = color; }
     int getSize() { return size; }
@@ -71,6 +77,7 @@ public:
 
 };
 
+// General class for things that can be define by two extremities
 class Rectangle : public DrawingShape {
 protected:
     QPoint startPoint {};
@@ -86,69 +93,22 @@ public:
     void onMouseMove(QPoint point) { endPoint = point; }
     void onMouseUp(QPoint point) { endPoint = point; }
 
-    virtual QRect getBoundingBox() {
-        int x = std::min(startPoint.x(), endPoint.x());
-        int y = std::min(startPoint.y(), endPoint.y());
+    virtual QRect getBoundingBox();
 
-        int w = std::abs(startPoint.x() - endPoint.x());
-        int h = std::abs(startPoint.y() - endPoint.y());
+    virtual bool contains(QPoint p);
 
-        return QRect {x, y, w, h};
-    }
+    virtual void moveBy(int dx, int dy);
 
-    // Test if the mouse lies on the shape boundary
-    virtual bool contains(QPoint p) {
-        QRect bb = getBoundingBox();
-        QRect rect1 = bb.adjusted(-5, -5, 5, 5);
-        QRect rect2 = bb.adjusted(5, 5, -5, -5);
+    virtual std::string toString(std::string prefix);
 
-        return rect1.contains(p) && !rect2.contains(p);
-    }
+    virtual std::string toString() { return toString("R"); }
 
-    virtual void moveBy(int dx, int dy) {
-        startPoint.setX(startPoint.x() + dx);
-        startPoint.setY(startPoint.y() + dy);
+    virtual void fromString(std::string line);
 
-        endPoint.setX(endPoint.x() + dx);
-        endPoint.setY(endPoint.y() + dy);
-    }
-
-    virtual std::string toString(std::string prefix) {
-        std::string result = "";
-        result += prefix + " ";
-        result += std::to_string(getColor().red()) + " ";
-        result += std::to_string(getColor().green()) + " ";
-        result += std::to_string(getColor().blue()) + " ";
-        result += std::to_string(getSize()) + " ";
-        result += std::to_string(startPoint.x()) + " ";
-        result += std::to_string(startPoint.y()) + " ";
-        result += std::to_string(endPoint.x()) + " ";
-        result += std::to_string(endPoint.y()) + " ";
-        return result;
-    }
-
-    virtual std::string toString() {
-        return toString("R");
-    }
-
-    virtual void fromString(std::string line) {
-        std::istringstream iss(line);
-        std::vector<std::string> tokens{std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{}};
-
-        startPoint.setX(std::stoi(tokens[5]));
-        startPoint.setY(std::stoi(tokens[6]));
-        endPoint.setX(std::stoi(tokens[7]));
-        endPoint.setY(std::stoi(tokens[8]));
-    }
-
-    virtual std::vector<QPoint *> getHandles() {
-        std::vector<QPoint *> handles;
-        handles.push_back(&startPoint);
-        handles.push_back(&endPoint);
-        return handles;
-    }
+    virtual std::vector<QPoint *> getHandles() { return {&startPoint, &endPoint} ; }
 };
 
+// What is an ellipse but a rounded rectangle ?
 class Ellipse : public Rectangle {
 public:
     Ellipse(QColor color, int size) : Rectangle(color, size) {}
@@ -156,21 +116,12 @@ public:
 public:
     void paint(QPainter &);
 
-    // Test if the mouse lies on the shape boundary (ellipse)
-    virtual bool contains(QPoint p) {
-        QRect bb = getBoundingBox();
-        QPoint center = bb.center();
-        int rx = bb.width()/2;
-        int ry = bb.height()/2;
+    virtual bool contains(QPoint p);
 
-        return pointInEllipse(p, center, rx + 5, ry + 5) && !pointInEllipse(p, center, rx - 5, ry - 5);
-    }
-
-    virtual std::string toString() {
-        return Rectangle::toString("E");
-    }
+    virtual std::string toString() { return Rectangle::toString("E"); }
 };
 
+// What is a line but a ... squished rectangle ?
 class Line : public Rectangle {
 public:
     Line(QColor color, int size) : Rectangle(color, size) {}
@@ -178,17 +129,10 @@ public:
 public:
     virtual void paint(QPainter &);
 
-    virtual std::string toString() {
-        return Rectangle::toString("L");
-    }
+    virtual bool contains(QPoint p);
 
-    virtual bool contains(QPoint p) {
-        QRect bb = getBoundingBox();
-        QPoint p1 = bb.topLeft();
-        QPoint p2 = bb.bottomRight();
+    virtual std::string toString() { return Rectangle::toString("L"); }
 
-        return pointOnLine(p, p1, p2, 5);
-    }
 };
 
 #endif // DRAWINGSHAPE_H

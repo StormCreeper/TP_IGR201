@@ -4,6 +4,7 @@
 #include <fstream>
 #include <QFile>
 #include <QMessageBox>
+#include <sstream>
 
 
 DrawingArea::DrawingArea(QWidget *parent) : QWidget{parent} {
@@ -157,6 +158,60 @@ void DrawingArea::save(QString filename) {
     file.close();
 }
 
+
+void DrawingArea::load(QString filename) {
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::information(this, tr("Unable to open file"), file.errorString());
+        return;
+    }
+
+    QTextStream in(&file);
+
+    int shapeCount = in.readLine().toInt();
+
+    for(int i = 0; i < shapeCount; i++) {
+        std::string line = in.readLine().toStdString();
+
+        std::istringstream iss(line);
+        std::vector<std::string> tokens{std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{}};
+
+        ShapeType type;
+        if(tokens[0] == "L") type = ShapeType::Line;
+        if(tokens[0] == "R") type = ShapeType::Rect;
+        if(tokens[0] == "E") type = ShapeType::Ellipse;
+        if(tokens[0] == "S") type = ShapeType::Brush;
+
+        QColor color {std::stoi(tokens[1]), std::stoi(tokens[2]), std::stoi(tokens[3])};
+        int size = std::stoi(tokens[4]);
+
+        std::shared_ptr<DrawingShape> shape = nullptr;
+
+        switch(type) {
+        case ShapeType::Line:
+            shape = std::make_shared<Line>(color, size);
+            break;
+        case ShapeType::Rect:
+            shape = std::make_shared<Rectangle>(color, size);
+            break;
+        case ShapeType::Ellipse:
+            shape = std::make_shared<Ellipse>(color, size);
+            break;
+        case ShapeType::Brush:
+            shape = std::make_shared<Stroke>(color, size);
+            break;
+        }
+
+        if(shape) {
+            shape->fromString(line);
+            shapes.push_back(shape);
+        }
+    }
+
+    file.close();
+
+    this->update();
+}
 
 
 

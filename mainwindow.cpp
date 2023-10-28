@@ -91,8 +91,8 @@ void MainWindow::load() {
     QString filename = QFileDialog::getOpenFileName(this, tr("Open drawing"), "C://Users/telop/Desktop", tr("Text files (*.txt)"));
     if(filename.isEmpty())
         QMessageBox::information(this, tr("Unable to open file"), "No file selected");
-    else ;
-        //area->load(filename);
+    else
+        area->load(filename);
 }
 
 void MainWindow::select() {

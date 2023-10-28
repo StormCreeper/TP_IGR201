@@ -5,6 +5,7 @@
 #include <QColor>
 #include <vector>
 #include <QPainter>
+#include <sstream>
 
 enum class ShapeType { Brush, Line, Rect, Ellipse };
 
@@ -29,6 +30,7 @@ public:
 
     virtual void moveBy(int dx, int dy) = 0;
     virtual std::string toString() = 0;
+    virtual void fromString(std::string ) = 0;
 
     virtual ~DrawingShape() {};
 
@@ -68,6 +70,18 @@ public:
         }
         return result;
     }
+
+    virtual void fromString(std::string line) {
+        std::istringstream iss(line);
+        std::vector<std::string> tokens{std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{}};
+
+        for(int i = 5; i < tokens.size(); i+=2) {
+            int x = std::stoi(tokens[i]);
+            int y = std::stoi(tokens[i+1]);
+            points.push_back(QPoint(x, y));
+        }
+    }
+    
 };
 
 class Rectangle : public DrawingShape {
@@ -103,9 +117,9 @@ public:
         endPoint.setY(endPoint.y() + dy);
     }
 
-    virtual std::string toString() {
+    virtual std::string toString(std::string prefix) {
         std::string result = "";
-        result += "R ";
+        result += prefix + " ";
         result += std::to_string(getColor().red()) + " ";
         result += std::to_string(getColor().green()) + " ";
         result += std::to_string(getColor().blue()) + " ";
@@ -116,6 +130,20 @@ public:
         result += std::to_string(endPoint.y()) + " ";
         return result;
     }
+
+    virtual std::string toString() {
+        return toString("R");
+    }
+
+    virtual void fromString(std::string line) {
+        std::istringstream iss(line);
+        std::vector<std::string> tokens{std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{}};
+
+        startPoint.setX(std::stoi(tokens[5]));
+        startPoint.setY(std::stoi(tokens[6]));
+        endPoint.setX(std::stoi(tokens[7]));
+        endPoint.setY(std::stoi(tokens[8]));
+    }
 };
 
 class Ellipse : public Rectangle {
@@ -124,6 +152,10 @@ public:
 
 public:
     void paint(QPainter &);
+
+    virtual std::string toString() {
+        return Rectangle::toString("E");
+    }
 };
 
 class Line : public Rectangle {
@@ -132,6 +164,10 @@ public:
 
 public:
     virtual void paint(QPainter &);
+
+    virtual std::string toString() {
+        return Rectangle::toString("L");
+    }
 };
 
 #endif // DRAWINGSHAPE_H

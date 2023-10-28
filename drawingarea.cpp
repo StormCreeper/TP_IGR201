@@ -82,17 +82,6 @@ void DrawingArea::mouseMoveEvent(QMouseEvent *e) {
             this->update();
         }
 
-        if(!mouseDown) {
-            selected = nullptr;
-            for (DrawingShape *shape : shapes) {
-                if(shape->contains(e->pos())) {
-                    selected = shape;
-                }
-            }
-            selectLastPosX = e->pos().x();
-            selectLastPosY = e->pos().y();
-            this->update();
-        }
     } else {
 
         if (mouseDown && currentShape) {
@@ -104,12 +93,11 @@ void DrawingArea::mouseMoveEvent(QMouseEvent *e) {
 }
 
 void DrawingArea::mouseReleaseEvent(QMouseEvent *e) {
+    mouseDown = false;
 
     if(selecting) {
-        selected = nullptr;
-    } else {
-        mouseDown = false;
 
+    } else {
         currentShape->onMouseUp(e->pos());
 
         shapes.push_back(currentShape);

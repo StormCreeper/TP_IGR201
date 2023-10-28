@@ -26,7 +26,6 @@ private:
     std::shared_ptr<DrawingShape> currentShape {};
     std::vector<std::shared_ptr<DrawingShape>> shapes {};
     bool mouseDown {};
-    int index = 0;
 
     QColor currentColor;
     int currentSize = 1;
@@ -41,7 +40,10 @@ private:
     int selectLastPosX {};
     int selectLastPosY {};
 
+    bool modified = true;
+
 public:
+    QString filename {};
     ~DrawingArea() {
     }
 
@@ -66,8 +68,15 @@ public:
     void clearAll();
     void toogleSelect();
 
-    void save(QString filename);
-    void load(QString filename);
+    void save();
+    void load();
+
+    void setModified(bool modified) {
+        this->modified = modified;
+        std::string title = "Currently editing : " + (filename.isEmpty() ? "Unnamed " : filename.toStdString() + " ") + (modified ? "*" : "");
+        window()->setWindowTitle(QString::fromStdString(title));
+    }
+    bool isModified() {return modified;}
 };
 
 #endif // DRAWINGAREA_H

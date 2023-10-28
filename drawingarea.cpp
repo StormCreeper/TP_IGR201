@@ -118,11 +118,13 @@ void DrawingArea::mouseMoveEvent(QMouseEvent *e) {
                 selectedHandle->setX(currentX);
                 selectedHandle->setY(currentY);
                 this->update();
+                setModified(true);
             } else if(selected) {
                 selected->moveBy(currentX - selectLastPosX, currentY - selectLastPosY);
                 selectLastPosX = currentX;
                 selectLastPosY = currentY;
                 this->update();
+                setModified(true);
             }
         }
 
@@ -131,9 +133,9 @@ void DrawingArea::mouseMoveEvent(QMouseEvent *e) {
         if (mouseDown && currentShape) {
             currentShape->onMouseMove(e->pos());
             this->update();
+            setModified(true);
         }
     }
-    this->update();
 }
 
 void DrawingArea::mouseReleaseEvent(QMouseEvent *e) {
@@ -147,6 +149,8 @@ void DrawingArea::mouseReleaseEvent(QMouseEvent *e) {
         shapes.push_back(currentShape);
 
         currentShape = nullptr;
+
+        setModified(true);
     }
 }
 
@@ -178,7 +182,7 @@ void DrawingArea::toogleSelect() {
 //       ii. Rectangle: x, y, width, height
 //       iii. Ellipse: x, y, width, height
 //       iv. Stroke: x1, y1, x2, y2, ..., xn, yn
-void DrawingArea::save(QString filename) {
+void DrawingArea::save() {
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly)) {
         QMessageBox::information(this, tr("Unable to open file"), file.errorString());
@@ -194,10 +198,12 @@ void DrawingArea::save(QString filename) {
     }
 
     file.close();
+
+    setModified(false);
 }
 
 
-void DrawingArea::load(QString filename) {
+void DrawingArea::load() {
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly)) {
         QMessageBox::information(this, tr("Unable to open file"), file.errorString());
@@ -249,6 +255,8 @@ void DrawingArea::load(QString filename) {
     file.close();
 
     this->update();
+
+    setModified(true);
 }
 
 

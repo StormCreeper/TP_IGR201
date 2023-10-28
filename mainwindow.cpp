@@ -54,6 +54,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) , ui(new Ui::MainW
     QAction *actionOpen = new QAction(QIcon(":/images/open.png"), tr("&Open"));
     QAction *actionSelect = new QAction(QIcon(":/images/select.png"), tr("&Select"));
 
+    actionSave->setShortcut(Qt::Key_S | Qt::CTRL);
+    actionOpen->setShortcut(Qt::Key_O | Qt::CTRL);
+
     actionSelect->setCheckable(true);
 
     menuFile->addAction(actionSave);
@@ -70,6 +73,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) , ui(new Ui::MainW
 
     area = new DrawingArea();
     setCentralWidget(area);
+
+    area->setModified(true);
 }
 
 void MainWindow::chooseColor() {
@@ -80,19 +85,24 @@ void MainWindow::clearAll() {
 }
 
 void MainWindow::save() {
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save drawing as"), "C://Users/telop/Desktop", tr("Text files (*.txt)"));
-    if(filename.isEmpty())
-        QMessageBox::information(this, tr("Unable to open file"), "No file selected");
-    else
-        area->save(filename);
+    if(area->filename.isEmpty()) {
+        area->filename = QFileDialog::getSaveFileName(this, tr("Save drawing as"), "C://Users/telop/Desktop", tr("Text files (*.txt)"));
+        if(area->filename.isEmpty())
+            QMessageBox::information(this, tr("Unable to open file"), "No file selected");
+        else
+            area->save();
+    } else {
+        if(area->isModified())
+            area->save();
+    }
 }
 
 void MainWindow::load() {
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open drawing"), "C://Users/telop/Desktop", tr("Text files (*.txt)"));
-    if(filename.isEmpty())
+    area->filename = QFileDialog::getOpenFileName(this, tr("Open drawing"), area->filename.isEmpty() ? "C://Users/telop/Desktop" : area->filename.toStdString().c_str(), tr("Text files (*.txt)"));
+    if(area->filename.isEmpty())
         QMessageBox::information(this, tr("Unable to open file"), "No file selected");
     else
-        area->load(filename);
+        area->load();
 }
 
 void MainWindow::select() {

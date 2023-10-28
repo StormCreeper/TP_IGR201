@@ -28,6 +28,7 @@ public:
     virtual QRect getBoundingBox() = 0;
 
     virtual void moveBy(int dx, int dy) = 0;
+    virtual std::string toString() = 0;
 
     virtual ~DrawingShape() {};
 
@@ -53,6 +54,20 @@ public:
 
     virtual QRect getBoundingBox() { return {}; }
     virtual void moveBy(int dx, int dy) {}
+
+    virtual std::string toString() {
+        std::string result = "";
+        result += "S ";
+        result += std::to_string(getColor().red()) + " ";
+        result += std::to_string(getColor().green()) + " ";
+        result += std::to_string(getColor().blue()) + " ";
+        result += std::to_string(getSize()) + " ";
+        for(QPoint p : points) {
+            result += std::to_string(p.x()) + " ";
+            result += std::to_string(p.y()) + " ";
+        }
+        return result;
+    }
 };
 
 class Rectangle : public DrawingShape {
@@ -86,6 +101,20 @@ public:
 
         endPoint.setX(endPoint.x() + dx);
         endPoint.setY(endPoint.y() + dy);
+    }
+
+    virtual std::string toString() {
+        std::string result = "";
+        result += "R ";
+        result += std::to_string(getColor().red()) + " ";
+        result += std::to_string(getColor().green()) + " ";
+        result += std::to_string(getColor().blue()) + " ";
+        result += std::to_string(getSize()) + " ";
+        result += std::to_string(startPoint.x()) + " ";
+        result += std::to_string(startPoint.y()) + " ";
+        result += std::to_string(endPoint.x()) + " ";
+        result += std::to_string(endPoint.y()) + " ";
+        return result;
     }
 };
 

@@ -65,6 +65,9 @@ public:
     void setCurrentTool(ShapeType newCurrentTool);
     void clearAll();
     void toogleSelect();
+
+    void save(QString filename);
+    void load(QString filename);
 };
 
 #endif // DRAWINGAREA_H

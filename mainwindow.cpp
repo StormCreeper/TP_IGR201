@@ -4,6 +4,8 @@
 #include <QColorDialog>
 #include <QActionGroup>
 #include <QToolBar>
+#include <QFileDialog>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) , ui(new Ui::MainWindow) {
 
@@ -78,11 +80,19 @@ void MainWindow::clearAll() {
 }
 
 void MainWindow::save() {
-    qDebug() << "Saving file (not implemented)";
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save drawing as"), "C://Users/telop/Desktop", tr("Text files (*.txt)"));
+    if(filename.isEmpty())
+        QMessageBox::information(this, tr("Unable to open file"), "No file selected");
+    else
+        area->save(filename);
 }
 
 void MainWindow::load() {
-    qDebug() << "Loading file (not implemented)";
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open drawing"), "C://Users/telop/Desktop", tr("Text files (*.txt)"));
+    if(filename.isEmpty())
+        QMessageBox::information(this, tr("Unable to open file"), "No file selected");
+    else ;
+        //area->load(filename);
 }
 
 void MainWindow::select() {

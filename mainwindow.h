@@ -28,6 +28,9 @@ private:
     QAction *actionToolRect {};
     QAction *actionToolEllipse {};
 
+private:
+    void closeEvent(QCloseEvent *close) override;
+
 public slots:
     void chooseColor();
     void clearAll();

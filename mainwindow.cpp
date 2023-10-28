@@ -74,7 +74,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) , ui(new Ui::MainW
     area = new DrawingArea();
     setCentralWidget(area);
 
-    area->setModified(true);
+    area->setModified(false);
 }
 
 void MainWindow::chooseColor() {
@@ -120,6 +120,20 @@ void MainWindow::chooseTool(QAction *action) {
     if(action == actionToolLine) area->setTool(ShapeType::Line);
     if(action == actionToolRect) area->setTool(ShapeType::Rect);
     if(action == actionToolEllipse) area->setTool(ShapeType::Ellipse);
+}
+
+void MainWindow::closeEvent(QCloseEvent *close) {
+    if(area->isModified()) {
+        QMessageBox::StandardButton reply = QMessageBox::question(this, "/*\\", "File has been modified, do you want to save ?", QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
+        if(reply == QMessageBox::Cancel) {
+            close->ignore();
+        } else {
+            if(reply == QMessageBox::Yes)
+                save();
+            close->accept();
+        }
+    } else
+        close->accept();
 }
 
 MainWindow::~MainWindow() {

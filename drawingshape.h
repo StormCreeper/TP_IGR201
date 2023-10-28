@@ -6,6 +6,10 @@
 #include <vector>
 #include <QPainter>
 #include <sstream>
+#include <QDebug>
+
+bool pointInEllipse(QPoint p, QPoint center, int rx, int ry);
+bool pointOnLine(QPoint p, QPoint p1, QPoint p2, float tolerance);
 
 enum class ShapeType { Brush, Line, Rect, Ellipse };
 
@@ -81,7 +85,7 @@ public:
             points.push_back(QPoint(x, y));
         }
     }
-    
+
 };
 
 class Rectangle : public DrawingShape {
@@ -107,6 +111,15 @@ public:
         int h = std::abs(startPoint.y() - endPoint.y());
 
         return QRect {x, y, w, h};
+    }
+
+    // Test if the mouse lies on the shape boundary
+    virtual bool contains(QPoint p) {
+        QRect bb = getBoundingBox();
+        QRect rect1 = bb.adjusted(-5, -5, 5, 5);
+        QRect rect2 = bb.adjusted(5, 5, -5, -5);
+
+        return rect1.contains(p) && !rect2.contains(p);
     }
 
     virtual void moveBy(int dx, int dy) {
@@ -153,6 +166,16 @@ public:
 public:
     void paint(QPainter &);
 
+    // Test if the mouse lies on the shape boundary (ellipse)
+    virtual bool contains(QPoint p) {
+        QRect bb = getBoundingBox();
+        QPoint center = bb.center();
+        int rx = bb.width()/2;
+        int ry = bb.height()/2;
+
+        return pointInEllipse(p, center, rx + 5, ry + 5) && !pointInEllipse(p, center, rx - 5, ry - 5);
+    }
+
     virtual std::string toString() {
         return Rectangle::toString("E");
     }
@@ -167,6 +190,14 @@ public:
 
     virtual std::string toString() {
         return Rectangle::toString("L");
+    }
+
+    virtual bool contains(QPoint p) {
+        QRect bb = getBoundingBox();
+        QPoint p1 = bb.topLeft();
+        QPoint p2 = bb.bottomRight();
+
+        return pointOnLine(p, p1, p2, 5);
     }
 };
 

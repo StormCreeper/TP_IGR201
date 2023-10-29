@@ -2,15 +2,19 @@
 This is my work for the class IGR201. It is a simple drawing program,
 with different tools and a simple GUI in QT and C++.
 ## Implemented
+> Drawing mode
 - Drawing free hand, lines, rectangles and ovals
-- Unlimited shapes
-- Can choose color
-- Can choose pen size
-- Icons for tools
-- Save / Load image file
+- Unlimited number of shapes
+- Can choose color, pen size
+> Select mode
+- Ability to modifie attributes, and to delete a shape
 - Resize using handles
+> Other
+- Icons for tools
+- Save / Load an image file in a custom format
 ## Todo
 - Add style selection (dotted etc)
 - Immplement a proper Handle class, to support custom actions (brush tool for example)
-- Ability to delete a shape
 - Implement a proper tool bar (menus are slow to use)
+## Bugs
+- Line selection is broken

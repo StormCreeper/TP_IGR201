@@ -22,6 +22,8 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent*);
     virtual void mouseMoveEvent(QMouseEvent*);
 
+    virtual void keyPressEvent(QKeyEvent*);
+
 private:
     std::shared_ptr<DrawingShape> currentShape {};
     std::vector<std::shared_ptr<DrawingShape>> shapes {};

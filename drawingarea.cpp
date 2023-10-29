@@ -11,6 +11,7 @@ DrawingArea::DrawingArea(QWidget *parent) : QWidget{parent} {
     setMinimumSize(QSize(500, 500));
 
     setMouseTracking(true);
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 void DrawingArea::paintEvent(QPaintEvent *e) {
@@ -58,6 +59,18 @@ void DrawingArea::paintEvent(QPaintEvent *e) {
         for(auto handle : handles) {
             painter.fillRect(handle->x()-4, handle->y()-4, 8, 8, Qt::white);
             painter.drawRect(handle->x()-4, handle->y()-4, 8, 8);
+        }
+    }
+}
+
+void DrawingArea::keyPressEvent(QKeyEvent *e) {
+    qDebug() << "Key pressed: " << e->key();
+    if(e->key() == Qt::Key_Delete) {
+        if(selecting && selected) {
+            shapes.erase(std::remove(shapes.begin(), shapes.end(), selected), shapes.end());
+            selected = nullptr;
+            this->update();
+            setModified(true);
         }
     }
 }

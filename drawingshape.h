@@ -59,6 +59,7 @@ public: // getters and setters
     void setSize(int size) { this->size = size; }
 };
 
+// Stroke shape defined by a list of points
 class Stroke : public DrawingShape {
 private:
     std::vector<QPoint> points {};
@@ -73,8 +74,11 @@ public:
     virtual void onMouseMove(QPoint point) { points.push_back(point); };
     virtual void onMouseUp(QPoint point) { points.push_back(point); };
 
-    virtual QRect getBoundingBox() { return {}; }
-    virtual void moveBy(int dx, int dy) {}
+    virtual QRect getBoundingBox();
+
+    virtual bool contains(QPoint p);
+
+    virtual void moveBy(int dx, int dy);
 
     virtual std::string toString();
 

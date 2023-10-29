@@ -128,7 +128,42 @@ void Rectangle::fromString(std::string line) {
     endPoint.setY(std::stoi(tokens[8]));
 }
 
-// ---------------------- Ellipse classe ----------------------
+// ---------------------- Stroke class ------------------------
+
+QRect Stroke::getBoundingBox()  {
+    if(points.size() == 0) return QRect();
+    int minX = points[0].x();
+    int minY = points[0].y();
+    int maxX = points[0].x();
+    int maxY = points[0].y();
+
+    for(QPoint &p : points) {
+        if(p.x() < minX) minX = p.x();
+        if(p.y() < minY) minY = p.y();
+        if(p.x() > maxX) maxX = p.x();
+        if(p.y() > maxY) maxY = p.y();
+    }
+
+    return QRect(QPoint(minX, minY), QPoint(maxX, maxY));
+}
+
+bool Stroke::contains(QPoint p) {
+    for(int i=0; i<points.size()-1; i++) {
+        QPoint &p1 = points[i];
+        QPoint &p2 = points[i+1];
+
+        if(pointOnLine(p, p1, p2, 5)) return true;
+    }
+    return false;
+}
+
+void Stroke::moveBy(int dx, int dy) {
+    for(QPoint &p : points) {
+        p.setX(p.x() + dx);
+        p.setY(p.y() + dy);
+    }
+}
+// ---------------------- Ellipse class ----------------------
 
 
 void Ellipse::paint(QPainter &painter) {

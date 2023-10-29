@@ -10,8 +10,8 @@ with different tools and a simple GUI in QT and C++.
 - Can choose color, pen size
 > Select mode
 - Ability to modifie attributes, and to delete a shape
-- Resize using handles
-- Change cursor when selecting, drawing, etc
+- Shapes can be resized using handles
+- Cursor changes when selecting, drawing, etc
 > Other
 - Icons for tools
 - Save / Load an image file in a custom format
@@ -20,5 +20,6 @@ with different tools and a simple GUI in QT and C++.
 - Immplement a proper Handle class, to support custom actions (brush tool for example)
 - Implement a proper toolbar (menus are slow to use)
 - Add ctrl+z and ctrl+shift+z support
+- Ability to edit a stroke shape
 ## Bugs
 - Line selection is broken

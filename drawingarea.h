@@ -1,3 +1,10 @@
+/**
+ * @file drawingarea.h
+ * @brief This file contains the declaration for the DrawingArea class.
+ * @date 2023/10/29
+ * @author Telo PHILIPPE
+*/
+
 #ifndef DRAWINGAREA_H
 #define DRAWINGAREA_H
 
@@ -43,6 +50,8 @@ private:
     int selectLastPosY {};
 
     bool modified = true;
+
+    bool getHovering(QPoint p);
 
 public:
     QString filename {};

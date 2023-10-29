@@ -1,3 +1,10 @@
+/**
+ * @file mainwindow.h
+ * @brief This file contains the implementation for the MainWindow class.
+ * @date 2023/10/29
+ * @author Telo PHILIPPE
+*/
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 

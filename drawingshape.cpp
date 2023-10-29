@@ -1,3 +1,10 @@
+/**
+ * @file drawingshape.cpp
+ * @brief This file contains the implementation for the DrawingShape class.
+ * @date 2023/10/29
+ * @author Telo PHILIPPE
+*/
+
 #include "drawingshape.h"
 
 

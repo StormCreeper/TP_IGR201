@@ -1,3 +1,10 @@
+/**
+ * @file mainwindow.cpp
+ * @brief This file contains the implementation for the MainWindow class.
+ * @date 2023/10/29
+ * @author Telo PHILIPPE
+*/
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 

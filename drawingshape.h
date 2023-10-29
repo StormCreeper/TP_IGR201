@@ -1,3 +1,10 @@
+/**
+ * @file drawingshape.h
+ * @brief This file contains the declaration for the DrawingShape class.
+ * @date 2023/10/29
+ * @author Telo PHILIPPE
+*/
+
 #ifndef DRAWINGSHAPE_H
 #define DRAWINGSHAPE_H
 

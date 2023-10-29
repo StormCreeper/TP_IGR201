@@ -1,3 +1,11 @@
+/**
+ * @file drawingarea.cpp
+ * @brief This file contains the implementation for the DrawingArea class.
+ * @date 2023/10/29
+ * @author Telo PHILIPPE
+*/
+
+
 #include "drawingarea.h"
 #include "QPainter"
 #include <iostream>
@@ -86,6 +94,7 @@ void DrawingArea::mousePressEvent(QMouseEvent *e) {
                     selectedHandle = handle;
                     selectLastPosX = e->pos().x();
                     selectLastPosY = e->pos().y();
+                    setCursor(Qt::ClosedHandCursor);
                     return;
                 }
             }
@@ -94,6 +103,7 @@ void DrawingArea::mousePressEvent(QMouseEvent *e) {
         for (auto shape : shapes) {
             if(shape->contains(e->pos())) {
                 selected = shape;
+                setCursor(Qt::ClosedHandCursor);
             }
         }
         selectLastPosX = e->pos().x();
@@ -120,6 +130,24 @@ void DrawingArea::mousePressEvent(QMouseEvent *e) {
     }
 }
 
+bool DrawingArea::getHovering(QPoint p) {
+    if(selected) {
+        auto handles = selected->getHandles();
+        for(auto handle : handles) {
+            if(QRect(handle->x()-4, handle->y()-4, 8, 8).contains(p)) {
+                return true;
+            }
+        }
+    }
+    for (auto shape : shapes) {
+        if(shape->contains(p)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void DrawingArea::mouseMoveEvent(QMouseEvent *e) {
 
     if(selecting) {
@@ -139,6 +167,10 @@ void DrawingArea::mouseMoveEvent(QMouseEvent *e) {
                 this->update();
                 setModified(true);
             }
+        } else {
+            bool hovering = getHovering(e->pos());
+            if(hovering) setCursor(Qt::OpenHandCursor);
+            else setCursor(Qt::ArrowCursor);
         }
 
     } else {

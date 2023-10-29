@@ -16,5 +16,6 @@ with different tools and a simple GUI in QT and C++.
 - Add style selection (dotted etc)
 - Immplement a proper Handle class, to support custom actions (brush tool for example)
 - Implement a proper tool bar (menus are slow to use)
+- Change cursor when selecting, drawing, etc
 ## Bugs
 - Line selection is broken
